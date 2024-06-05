@@ -2,6 +2,8 @@
 const express = require('express');
 const redis = require('redis');
 
+const client = redis.createClient();
+
 const app = express()
 const port = 3000
 
@@ -21,14 +23,19 @@ app.listen(port, ()=>{
 })
 
 async function setupRedis(){
-    const client = redis.createClient();
 
     client.on('error', err => console.log('Redis Client Error', err));
 
     await client.connect();
+}
 
-    await client.set('key', 'value');
+async function getHighScore() {
     const value = await client.get('key');
-
     console.log(value);
+    return value;
+}
+
+async function setHighScore(highscoreValue) {
+    await client.set('highscore', highscoreValue);
+    
 }
