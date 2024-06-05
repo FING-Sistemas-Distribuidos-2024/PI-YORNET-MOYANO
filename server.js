@@ -7,20 +7,28 @@ const client = redis.createClient();
 const app = express()
 const port = 3000
 
-// Pongo hello world en el html
-app.get('/', (req, res) => {
-    res.send('Hello world');
-})
-
 
 // hago setup de redis
 setupRedis();
+setHighScore(3);
+
+// Responde con "Hello World" cuando una petición GET se hace al homepage
+app.get('/', (req, res) => {
+
+    getHighScore().then(highscore => { // Esto utiliza un then porque sino el Highscore como es una promesa no se muestra
+        let text = "The Highscore is: " + highscore.toString();
+        res.send(text);
+    })
+    //let highscore = await getHighScore();
+    
+})
 
 
 // Hago que el server esté en localhost:3000
 app.listen(port, ()=>{
     console.log(`Server is running on port ${port}`)
 })
+
 
 async function setupRedis(){
 
@@ -30,7 +38,7 @@ async function setupRedis(){
 }
 
 async function getHighScore() {
-    const value = await client.get('key');
+    const value = await client.get('highscore');
     console.log(value);
     return value;
 }
