@@ -1,39 +1,40 @@
-// Importo redis y express
 const express = require('express');
 const redis = require('redis');
+const path = require('path'); // Importa path para manejar rutas
 
 const client = redis.createClient();
+const app = express();
+const port = 5000;
 
-const app = express()
-const port = 3000
+// Servir archivos estáticos desde el directorio "public"
+app.use(express.static(path.join(__dirname, 'public')));
+app.use(express.json()); // Para manejar cuerpos de solicitud en formato JSON
 
-
-// hago setup de redis
 setupRedis();
 setHighScore(3);
 
-// Responde con "Hello World" cuando una petición GET se hace al homepage
-app.get('/', (req, res) => {
-
-    getHighScore().then(highscore => { // Esto utiliza un then porque sino el Highscore como es una promesa no se muestra
+app.get('/highscore', (req, res) => {
+    getHighScore().then(highscore => {
         let text = "The Highscore is: " + highscore.toString();
         res.send(text);
-    })
-    //let highscore = await getHighScore();
-    
-})
+    });
+});
 
+app.post('/highscore', (req, res) => {
+    const highscore = req.body.highscore;
+    setHighScore(highscore).then(() => {
+        res.json({ status: 'success', highscore: highscore });
+    }).catch(err => {
+        res.status(500).json({ status: 'error', message: err.message });
+    });
+});
 
-// Hago que el server esté en localhost:3000
-app.listen(port, ()=>{
-    console.log(`Server is running on port ${port}`)
-})
+app.listen(port, () => {
+    console.log(`Server is running on port ${port}`);
+});
 
-
-async function setupRedis(){
-
+async function setupRedis() {
     client.on('error', err => console.log('Redis Client Error', err));
-
     await client.connect();
 }
 
@@ -45,5 +46,4 @@ async function getHighScore() {
 
 async function setHighScore(highscoreValue) {
     await client.set('highscore', highscoreValue);
-    
 }
