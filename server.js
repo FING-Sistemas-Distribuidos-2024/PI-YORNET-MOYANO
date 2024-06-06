@@ -12,6 +12,7 @@ app.use(express.json());
 setupRedis();
 setHighScore(3);
 
+// Obtiene la puntuación más alta
 app.get('/highscore', async (req, res) => {
     try {
         const highscore = await getHighScore();
@@ -21,6 +22,7 @@ app.get('/highscore', async (req, res) => {
     }
 });
 
+// Establece una nueva puntuación más alta
 app.post('/highscore', (req, res) => {
     const highscore = req.body.highscore;
     setHighScore(highscore).then(() => {
@@ -30,21 +32,25 @@ app.post('/highscore', (req, res) => {
     });
 });
 
+// Inicia el servidor y escucha en el puerto especificado
 app.listen(port, () => {
     console.log(`Server is running on port ${port}`);
 });
 
+// Configura el cliente de Redis
 async function setupRedis() {
     client.on('error', err => console.log('Redis Client Error', err));
     await client.connect();
 }
 
+// Obtiene la puntuación más alta desde Redis
 async function getHighScore() {
     const value = await client.get('highscore');
     console.log(value);
     return value;
 }
 
+// Establece una nueva puntuación más alta en Redis
 async function setHighScore(highscoreValue) {
     await client.set('highscore', highscoreValue);
 }

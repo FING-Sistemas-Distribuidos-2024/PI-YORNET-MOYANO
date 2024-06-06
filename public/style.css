@@ -53,9 +53,10 @@ p, h2 {
 
 .score-container {
     text-align: center;
-    width: 70px;
+    width: 100px;
     height: 60px;
     border-radius: 3px;
+    margin-left: 20px;
     background-color: #8f7a66;
     color: #FFF;
 }
@@ -70,9 +71,10 @@ p, h2 {
 
 .highscore-container {
     text-align: center;
-    width: 140px;
+    width: 200px;
     height: 60px;
     border-radius: 3px;
+    margin-left: 20px;
     background-color: #8f7a66;
     color: #FFF;
 }

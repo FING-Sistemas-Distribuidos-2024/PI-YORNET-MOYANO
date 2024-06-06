@@ -6,7 +6,6 @@ document.addEventListener("DOMContentLoaded", () => {
     let squares = []
     let score = 0
 
-    // create the playing board
     function createBoard() {
         for (let i = 0; i < width * width; i++) {
             const square = document.createElement("div")
@@ -19,7 +18,6 @@ document.addEventListener("DOMContentLoaded", () => {
     }
     createBoard()
 
-    //generate a new number
     function generate() {
         const randomNumber = Math.floor(Math.random() * squares.length)
         if (squares[randomNumber].innerHTML == 0) {
@@ -138,7 +136,6 @@ document.addEventListener("DOMContentLoaded", () => {
         checkForWin()
     }
 
-    ///assign functions to keys
     function control(e) {
         if (e.key === "ArrowLeft") {
             keyLeft()
@@ -180,7 +177,6 @@ document.addEventListener("DOMContentLoaded", () => {
         generate()
     }
 
-    //check for the number 2048 in the squares to win
     function checkForWin() {
         for (let i = 0; i < squares.length; i++) {
             if (squares[i].innerHTML == 2048) {
@@ -192,7 +188,6 @@ document.addEventListener("DOMContentLoaded", () => {
         }
     }
 
-    //check if there are no zeros on the board to lose
     function checkForGameOver() {
         let zeros = 0
         for (let i = 0; i < squares.length; i++) {
@@ -212,7 +207,6 @@ document.addEventListener("DOMContentLoaded", () => {
         clearInterval(myTimer)
     }
 
-    //add colours
     function addColours() {
         for (let i = 0; i < squares.length; i++) {
             if (squares[i].innerHTML == 0) squares[i].style.backgroundColor = "#afa192"
@@ -234,14 +228,17 @@ document.addEventListener("DOMContentLoaded", () => {
     let myTimer = setInterval(addColours, 50)
 })
 
+// Actualiza el highscore cuando se carga la página
 document.addEventListener('DOMContentLoaded', (event) => {
     getHighscoreFromServer();
 });
 
+// Actualiza el highscore cuando se presiona una tecla
 document.addEventListener('keydown', (event) => {
     getHighscoreFromServer();
 });
 
+// Obtiene la puntuación más alta del servidor
 async function getHighscoreFromServer() {
     try {
         let response = await fetch("/highscore");
@@ -256,6 +253,7 @@ async function getHighscoreFromServer() {
     }
 }
 
+// Establece la puntuación más alta en el servidor
 async function setHighscoreOnServer() {
     const score = parseInt(document.getElementById('score').innerHTML);
     console.log(score);
@@ -265,8 +263,10 @@ async function setHighscoreOnServer() {
     console.log(data.highscore);
     console.log(score > data.highscore);
 
+    // Solo actualiza el highscore si la puntuación actual es mayor que la puntuación más alta
     if (score > data.highscore) {
         try {
+            // Envía la puntuación al servidor
             let response = await fetch("/highscore", {
                 method: 'POST',
                 headers: {
