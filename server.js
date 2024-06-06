@@ -1,23 +1,24 @@
 const express = require('express');
 const redis = require('redis');
-const path = require('path'); // Importa path para manejar rutas
+const path = require('path');
 
 const client = redis.createClient();
 const app = express();
 const port = 5000;
 
-// Servir archivos estáticos desde el directorio "public"
 app.use(express.static(path.join(__dirname, 'public')));
-app.use(express.json()); // Para manejar cuerpos de solicitud en formato JSON
+app.use(express.json());
 
 setupRedis();
 setHighScore(3);
 
-app.get('/highscore', (req, res) => {
-    getHighScore().then(highscore => {
-        let text = "The Highscore is: " + highscore.toString();
-        res.send(text);
-    });
+app.get('/highscore', async (req, res) => {
+    try {
+        const highscore = await getHighScore();
+        res.json({ highscore: highscore });
+    } catch (error) {
+        res.status(500).json({ status: 'error', message: error.message });
+    }
 });
 
 app.post('/highscore', (req, res) => {
