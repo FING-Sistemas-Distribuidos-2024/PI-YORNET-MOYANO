@@ -1,7 +1,6 @@
 // Importo redis y express y cors
 const express = require('express');
 const redis = require('redis');
-const cors = require('cors'); // npm install cors
 
 
 const client = redis.createClient();
@@ -9,13 +8,6 @@ const client = redis.createClient();
 const app = express()
 const port = 3000
 
-// Esto es para solucionar error CORS que tira
-app.use(cors());
-app.get('/products/:id', function(req, res,next){
-    res.json({msg: 'This is CORS-enabled for all origins!'});
-    res.send("xd");
-}
-);
 
 // hago setup de redis
 setupRedis();
