@@ -1,5 +1,6 @@
 // Importo redis y express y cors
 const express = require('express');
+const path = require('path');
 const redis = require('redis');
 
 
@@ -13,8 +14,12 @@ const port = 3000
 setupRedis();
 setHighScore(3);
 
+// Servir archivos estáticos (frontend) desde el directorio "client"
+app.use(express.static(path.join(__dirname, '../client')));
+
+
 // Responde con "Hello World" cuando una petición GET se hace al homepage
-app.get('/', (req, res) => {
+app.get('/highscore', (req, res) => {
 
     getHighScore().then(highscore => { // Esto utiliza un then porque sino el Highscore como es una promesa no se muestra
         let text = "The Highscore is: " + highscore.toString();
