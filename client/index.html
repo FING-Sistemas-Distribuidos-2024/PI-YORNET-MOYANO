@@ -12,7 +12,7 @@
         <input type="text" id="name" name="name">
         <label for="score">Score:</label>
         <input type="number" id="score" name="score">
-        <button onclick="setHighscoreOnServer()">Enviar</button>
+        <button onclick="sendScoreToServer(document.getElementById('name').value, document.getElementById('score').value)">Enviar</button>
     </div>
     <div>
         <label for="leaderboard">Leaderboard: </label>

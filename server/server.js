@@ -16,6 +16,8 @@ setHighScore(3);
 
 // Servir archivos estáticos (frontend) desde el directorio "client"
 app.use(express.static(path.join(__dirname, '../client')));
+// Esto permite recibir jsons
+app.use(express.json())
 
 
 // Responde con "Hello World" cuando una petición GET se hace al homepage
@@ -27,6 +29,10 @@ app.get('/highscore', (req, res) => {
     })
     //let highscore = await getHighScore();
     
+})
+
+app.post('/highscore', (req, res) => {
+    console.log(req.body)
 })
 
 
