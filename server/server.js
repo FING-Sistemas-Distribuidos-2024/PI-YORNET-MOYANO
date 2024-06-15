@@ -32,7 +32,12 @@ app.get('/highscore', (req, res) => {
 })
 
 app.post('/highscore', (req, res) => {
-    console.log(req.body)
+    console.log(req.body);
+    setPlayerOnLeaderboard(req.body, 1);
+    getPlayerName(1).then( numberOne => {
+        console.log("number one name:");
+        console.log(numberOne);
+    })
 })
 
 
@@ -58,4 +63,24 @@ async function getHighScore() {
 async function setHighScore(highscoreValue) {
     await client.set('highscore', highscoreValue);
     
+}
+
+// Sets the player specified in playerInfo to the position specified in the redis db
+async function setPlayerOnLeaderboard(playerInfo, position) {
+
+    await client.set(`number${position}Name`, playerInfo['name']);
+    await client.set(`number${position}Score`, playerInfo['score']);
+    
+}
+
+// gets the player name in the position specified from the redis db
+async function getPlayerName(position) {
+    const value = await client.get(`number${position}Name`);
+    return value;
+}
+
+// gets the player score in the position specified from the redis db
+async function getPlayerScore(position) {
+    const value = await client.get(`number${position}Score`);
+    return value;
 }
