@@ -32,12 +32,17 @@ app.get('/highscore', (req, res) => {
 })
 
 app.post('/highscore', (req, res) => {
-    console.log(req.body);
-    setPlayerOnLeaderboard(req.body, 1);
-    getPlayerName(1).then( numberOne => {
-        console.log("number one name:");
-        console.log(numberOne);
-    })
+    let playerInfo = req.body;
+    topTenPosition(playerInfo['score']).then( position => {
+        console.log("player assigned pos:")
+        console.log(position);
+
+        setPlayerOnLeaderboard(req.body, position);
+        getPlayerName(position).then( playerSet => {
+            console.log("player set:");
+            console.log(playerSet);
+        })
+    });
 })
 
 
@@ -47,11 +52,40 @@ app.listen(port, ()=>{
 })
 
 
+// returns the position in which the score should be placed given the current leaderboard
+async function topTenPosition(score) {
+
+    let position = -1;
+
+    for (let i = 10; i > 0; i--) {
+        
+        let redisScore = await getPlayerScore(i);
+
+        console.log(i);
+        console.log(score + ">" + redisScore);
+        if (score > redisScore) {
+            position = i;
+        } else {
+
+            break;
+        }
+    }
+
+    return position;
+}
+
+// ================================== REDIS =====================================================
+
 async function setupRedis(){
 
     client.on('error', err => console.log('Redis Client Error', err));
 
     await client.connect();
+
+    // Here we set all the positions to 0 so that we don't have problem with later code
+    for (let i = 1; i < 11; i++) {
+        setPlayerOnLeaderboard({'name': "", 'score': 0},i);
+    }
 }
 
 async function getHighScore() {
