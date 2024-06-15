@@ -28,21 +28,23 @@ app.get('/highscore', (req, res) => {
     })
 })
 
+/**
+ * Check if the new score is a highscore, if it is it calculates its position 
+ * on the leaderboard and saves it in the redis db
+ */
 app.post('/highscore', (req, res) => {
     let playerInfo = req.body;
+    // calculates player position by score
     topTenPosition(playerInfo['score']).then( position => {
-        console.log("player assigned pos:")
-        console.log(position);
 
-        if (position > 0) {
+
+        if (position > 0) {// This happens when the score is a new highscore
+
             setPlayerOnLeaderboard(req.body, position);
-            getPlayerName(position).then( playerSet => {
-                console.log("player set:");
-                console.log(playerSet);
-            })
-        } else {
-            console.log(playerInfo['name']+ " has not set a highscore");
         }
+
+        // Sends a response to the client, so that it doesn't leave it hanging
+        res.status(200).send();
     });
 })
 
@@ -62,8 +64,10 @@ async function topTenPosition(score) {
         
         let redisScore = await getPlayerScore(i);
 
-        console.log(i);
-        console.log(score + ">" + redisScore);
+        // transforms numbers to intengers so that the comparison is right
+        redisScore = Number(redisScore);
+        score = Number(score);
+
         if (score > redisScore) {
             position = i;
         } else {
