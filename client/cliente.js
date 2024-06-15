@@ -1,20 +1,20 @@
-// This loads the leaderboard from the server
-getLeaderboardFromServer().then( leaderboard => {
-    updateLeaderboard(leaderboard);
-});
+setLeaderBoardOnClient();
 
+// This loads the leaderboard from the server and shows it in the html
 async function setLeaderBoardOnClient(){
-    getHighscoreFromServer();
+    getLeaderboardFromServer().then( leaderboard => {
+        updateLeaderboard(leaderboard);
+    });
 }
 
-// returns the leaderboard from the server
+// Returns the leaderboard from the server in json format
 async function getLeaderboardFromServer() {
     let response = await fetch("http://localhost:3000/highscore")
     let data = await response.json();
     return data;
 }
 
-// puts the currentLeaderBoard data into the html list
+// Puts the currentLeaderBoard data into the html list
 function updateLeaderboard(currentLeaderboard) {
 
     for (let i = 1; i < 11; i++) {
@@ -23,14 +23,9 @@ function updateLeaderboard(currentLeaderboard) {
 
 }
 
-async function setHighscoreOnServer(score) {
-    let response = await fetch("http://localhost:3000/highscore")
-    let data = await response.text();
-    console.log(data);
-    return data;
-}
-
+// Sends the score made to the server in json format
 async function sendScoreToServer(name, score) {
+
     let jsonToBeSent = {
         "name": name,
         "score": score
@@ -44,9 +39,6 @@ async function sendScoreToServer(name, score) {
         body: JSON.stringify(jsonToBeSent)
     })
     
-    
-    // This loads the leaderboard from the server
-    getLeaderboardFromServer().then( leaderboard => {
-        updateLeaderboard(leaderboard);
-    });
+
+    setLeaderBoardOnClient();
 }

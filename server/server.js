@@ -1,4 +1,4 @@
-// Importo redis y express y cors
+// Imports redis, path and express
 const express = require('express');
 const path = require('path');
 const redis = require('redis');
@@ -10,17 +10,15 @@ const app = express()
 const port = 3000
 
 
-// hago setup de redis
 setupRedis();
-setHighScore(3);
 
-// Servir archivos estáticos (frontend) desde el directorio "client"
+// This servers static files (frontend) from the directory '/client'
 app.use(express.static(path.join(__dirname, '../client')));
-// Esto permite recibir jsons
+// This allows receiving jsons
 app.use(express.json())
 
 
-// Responde con el leaderboard cuando una petición GET se hace a /highscore
+// This responds with the leaderboard when a GET request is made to /highscore
 app.get('/highscore', (req, res) => {
     
     getLeaderboard().then( leaderboard => {
@@ -29,12 +27,12 @@ app.get('/highscore', (req, res) => {
 })
 
 /**
- * Check if the new score is a highscore, if it is it calculates its position 
+ * Check if the given score is a highscore, if it is it calculates its position 
  * on the leaderboard and saves it in the redis db
  */
 app.post('/highscore', (req, res) => {
     let playerInfo = req.body;
-    // calculates player position by score
+    // Calculates player position by score
     topTenPosition(playerInfo['score']).then( position => {
 
 
@@ -49,13 +47,13 @@ app.post('/highscore', (req, res) => {
 })
 
 
-// Hago que el server esté en localhost:3000
+// This makes the server be in localhost:port
 app.listen(port, ()=>{
     console.log(`Server is running on port ${port}`)
 })
 
 
-// returns the position in which the score should be placed given the current leaderboard
+// Returns the position in which the score should be placed given the current leaderboard
 async function topTenPosition(score) {
 
     let position = -1;
@@ -64,7 +62,7 @@ async function topTenPosition(score) {
         
         let redisScore = await getPlayerScore(i);
 
-        // transforms numbers to intengers so that the comparison is right
+        // Transforms numbers to intengers so that the comparison is right
         redisScore = Number(redisScore);
         score = Number(score);
 
@@ -96,18 +94,7 @@ async function setupRedis(){
     }
 }
 
-async function getHighScore() {
-    const value = await client.get('highscore');
-    console.log(value);
-    return value;
-}
-
-async function setHighScore(highscoreValue) {
-    await client.set('highscore', highscoreValue);
-    
-}
-
-// returns a json with all the leaderboard data from redis
+// Returns a json with all the leaderboard data from redis
 async function getLeaderboard() {
 
     let leaderboard = {};
@@ -142,7 +129,7 @@ async function setPlayerOnLeaderboard(playerInfo, position) {
     await client.set(`number${position}Name`, playerInfo['name']);
     await client.set(`number${position}Score`, playerInfo['score']);
     
-    if (position + 1 < 11) { // Esto hace que recursivamente se desplacen todos los highscores para abajo
+    if (position + 1 < 11) { // This makes all highscore go down recursively when a new one is set
         await setPlayerOnLeaderboard({"name": oldPlayerName, "score": oldPlayerScore}, position + 1)
     }
 }
@@ -158,13 +145,13 @@ async function setPlayerOnPosition(playerInfo, position) {
 }
 
 
-// gets the player name in the position specified from the redis db
+// Gets the player name in the position specified from the redis db
 async function getPlayerName(position) {
     const value = await client.get(`number${position}Name`);
     return value;
 }
 
-// gets the player score in the position specified from the redis db
+// Gets the player score in the position specified from the redis db
 async function getPlayerScore(position) {
     const value = await client.get(`number${position}Score`);
     return value;
