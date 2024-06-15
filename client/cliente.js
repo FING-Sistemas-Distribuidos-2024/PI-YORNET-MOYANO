@@ -44,7 +44,7 @@ async function sendScoreToServer(name, score) {
         body: JSON.stringify(jsonToBeSent)
     })
     
-    console.log("xd")
+    
     // This loads the leaderboard from the server
     getLeaderboardFromServer().then( leaderboard => {
         updateLeaderboard(leaderboard);

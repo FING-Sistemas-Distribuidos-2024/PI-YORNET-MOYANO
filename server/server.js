@@ -87,9 +87,12 @@ async function setupRedis(){
 
     await client.connect();
 
-    // Here we set all the positions to 0 so that we don't have problem with later code
-    for (let i = 1; i < 11; i++) {
-        setPlayerOnPosition({'name': "", 'score': 0},i);
+    // Here we set all the positions to 0 if the redis db has no data
+    let sampleScore = await getPlayerScore(1);
+    if(sampleScore == null){
+        for (let i = 1; i < 11; i++) {
+            setPlayerOnPosition({'name': "", 'score': 0},i);
+        }
     }
 }
 
