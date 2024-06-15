@@ -89,7 +89,7 @@ async function setupRedis(){
 
     // Here we set all the positions to 0 so that we don't have problem with later code
     for (let i = 1; i < 11; i++) {
-        setPlayerOnLeaderboard({'name': "", 'score': 0},i);
+        setPlayerOnPosition({'name': "", 'score': 0},i);
     }
 }
 
@@ -124,18 +124,36 @@ async function getLeaderboard() {
 
     }
 
-    console.log(leaderboard);
-
     return leaderboard;
 }
 
-// Sets the player specified in playerInfo to the position specified in the redis db
+/**
+ * Sets the player specified in playerInfo to the position specified in the redis db
+ * and then pushes down the previous player that occupied that position
+ */
 async function setPlayerOnLeaderboard(playerInfo, position) {
+
+    let oldPlayerName = await getPlayerName(position);
+    let oldPlayerScore = await getPlayerScore(position);
 
     await client.set(`number${position}Name`, playerInfo['name']);
     await client.set(`number${position}Score`, playerInfo['score']);
     
+    if (position + 1 < 11) { // Esto hace que recursivamente se desplacen todos los highscores para abajo
+        await setPlayerOnLeaderboard({"name": oldPlayerName, "score": oldPlayerScore}, position + 1)
+    }
 }
+
+/** 
+ * Sets the player specified in playerInfo to the position specified in the redis db without
+ * re-adjusting the leaderboard
+ * */
+
+async function setPlayerOnPosition(playerInfo, position) {
+    await client.set(`number${position}Name`, playerInfo['name']);
+    await client.set(`number${position}Score`, playerInfo['score']);
+}
+
 
 // gets the player name in the position specified from the redis db
 async function getPlayerName(position) {
