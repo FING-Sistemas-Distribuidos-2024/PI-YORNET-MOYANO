@@ -20,15 +20,12 @@ app.use(express.static(path.join(__dirname, '../client')));
 app.use(express.json())
 
 
-// Responde con "Hello World" cuando una petición GET se hace al homepage
+// Responde con el leaderboard cuando una petición GET se hace a /highscore
 app.get('/highscore', (req, res) => {
-
-    getHighScore().then(highscore => { // Esto utiliza un then porque sino el Highscore como es una promesa no se muestra
-        let text = "The Highscore is: " + highscore.toString();
-        res.send(text);
-    })
-    //let highscore = await getHighScore();
     
+    getLeaderboard().then( leaderboard => {
+        res.send(leaderboard);
+    })
 })
 
 app.post('/highscore', (req, res) => {
@@ -103,9 +100,34 @@ async function setHighScore(highscoreValue) {
     
 }
 
+// returns a json with all the leaderboard data from redis
+async function getLeaderboard() {
+
+    let leaderboard = {};
+
+    for (let i = 1; i < 11; i++) {
+
+        let currentName = await getPlayerName(i);
+        let currentScore = await getPlayerScore(i);
+
+
+        let player = {
+            'name': currentName,
+            'score': currentScore,
+        }
+        
+        leaderboard[`player${i}`] = player;
+
+    }
+
+    console.log(leaderboard);
+
+    return leaderboard;
+}
+
 // Sets the player specified in playerInfo to the position specified in the redis db
 async function setPlayerOnLeaderboard(playerInfo, position) {
-    
+
     await client.set(`number${position}Name`, playerInfo['name']);
     await client.set(`number${position}Score`, playerInfo['score']);
     
