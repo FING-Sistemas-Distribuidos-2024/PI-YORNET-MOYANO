@@ -37,11 +37,15 @@ app.post('/highscore', (req, res) => {
         console.log("player assigned pos:")
         console.log(position);
 
-        setPlayerOnLeaderboard(req.body, position);
-        getPlayerName(position).then( playerSet => {
-            console.log("player set:");
-            console.log(playerSet);
-        })
+        if (position > 0) {
+            setPlayerOnLeaderboard(req.body, position);
+            getPlayerName(position).then( playerSet => {
+                console.log("player set:");
+                console.log(playerSet);
+            })
+        } else {
+            console.log(playerInfo['name']+ " has not set a highscore");
+        }
     });
 })
 
@@ -101,7 +105,7 @@ async function setHighScore(highscoreValue) {
 
 // Sets the player specified in playerInfo to the position specified in the redis db
 async function setPlayerOnLeaderboard(playerInfo, position) {
-
+    
     await client.set(`number${position}Name`, playerInfo['name']);
     await client.set(`number${position}Score`, playerInfo['score']);
     
