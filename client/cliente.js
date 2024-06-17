@@ -9,7 +9,7 @@ async function setLeaderBoardOnClient(){
 
 // Returns the leaderboard from the server in json format
 async function getLeaderboardFromServer() {
-    let response = await fetch("http://localhost:3000/highscore")
+    let response = await fetch("/highscore")
     let data = await response.json();
     return data;
 }
@@ -31,7 +31,7 @@ async function sendScoreToServer(name, score) {
         "score": score
     }
     
-    let request = await fetch("http://localhost:3000/highscore", {
+    let request = await fetch("/highscore", {
         method: 'POST',
         headers: {
             'Content-Type': 'application/json'

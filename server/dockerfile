@@ -1,0 +1,19 @@
+FROM node:22
+
+WORKDIR /server
+
+# Copies all the npm dependency
+COPY package*.json ./
+
+# Installs all the npm packages
+RUN npm install
+
+# Copies everything in this folder
+COPY . .
+
+ENV PORT=8080
+
+# Exposes port 8080
+EXPOSE 8080
+
+CMD [ "node", "server.js" ]

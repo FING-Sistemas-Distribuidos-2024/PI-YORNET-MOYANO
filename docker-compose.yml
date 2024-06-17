@@ -1,0 +1,38 @@
+services:
+  my-client:
+    build: client/
+    container_name: my-client
+    ports:
+      - "80:80"
+    environment:
+      SERVER_HOST: my-server
+    networks:
+      - highscore-network
+    depends_on:
+      - my-server
+  my-server:
+    build: server/
+    container_name: my-server
+    ports:
+      - "3000:8080"
+    networks:
+      - highscore-network
+    environment:
+      REDIS_HOST: redis
+      REDIS_PORT: 6379
+    depends_on:
+      - redis
+  redis:
+    image: "redis"
+    container_name: redis
+    volumes:
+      - db-data:/data
+    networks:
+      - highscore-network
+
+volumes:
+  db-data:
+
+networks:
+  highscore-network:
+    driver: bridge
