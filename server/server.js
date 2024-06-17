@@ -2,6 +2,7 @@
 const express = require('express');
 const path = require('path');
 const redis = require('redis');
+const cors = require('cors')
 
 
 // Esto se hace para comunicar con otros containers a través de variables de entorno
@@ -17,6 +18,9 @@ const client = redis.createClient({
 
 const app = express()
 const port = 3000
+
+// Enables cors, this is makes the backend work with nginx frontend
+app.use(cors());
 
 
 setupRedis();
