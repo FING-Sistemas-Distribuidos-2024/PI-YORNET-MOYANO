@@ -4,7 +4,16 @@ const path = require('path');
 const redis = require('redis');
 
 
-const client = redis.createClient();
+// Esto se hace para comunicar con otros containers a través de variables de entorno
+const redisHost = process.env.REDIS_HOST || 'localhost';
+const redisPort = process.env.REDIS_PORT || 6379;
+
+const client = redis.createClient({
+    socket: {
+        host: redisHost,
+        port: redisPort
+    }
+});
 
 const app = express()
 const port = 3000
@@ -13,7 +22,7 @@ const port = 3000
 setupRedis();
 
 // This servers static files (frontend) from the directory '/client'
-app.use(express.static(path.join(__dirname, '../client')));
+//app.use(express.static(path.join(__dirname, '../client')));
 // This allows receiving jsons
 app.use(express.json())
 
