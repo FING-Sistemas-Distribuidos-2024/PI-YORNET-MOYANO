@@ -1,0 +1,22 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: my-server-deployment
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: my-server
+  template:
+    metadata:
+      labels:
+        app: my-server
+    spec:
+      containers:
+      - name: my-server
+        image: lucasepk/highscore_app_server:latest
+        ports:
+        - containerPort: 3000
+        env:
+        - name: REDIS_HOST
+          value: "redis"

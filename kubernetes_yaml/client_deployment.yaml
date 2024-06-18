@@ -1,0 +1,27 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: my-client-deployment
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: my-client
+  template:
+    metadata:
+      labels:
+        app: my-client
+    spec:
+      containers:
+      - name: my-client
+        image: lucasepk/highscore_app_client:latest
+        ports:
+        - containerPort: 80
+        volumeMounts:
+        - name: nginx-config-volume
+          mountPath: /etc/nginx/nginx.conf
+          subPath: nginx.conf
+      volumes:
+      - name: nginx-config-volume
+        configMap:
+          name: nginx-config
