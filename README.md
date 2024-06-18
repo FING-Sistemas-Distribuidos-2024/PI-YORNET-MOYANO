@@ -1,20 +1,13 @@
-# Sistemas Distribuidos 2024: Proyecto Integrador REDO
-
-Lucas Moyano
-
-## IP deployada
-Podes encontrar la webapp ya deployada en el ip:  
-10.230.60.21  
-Nota: puede ser que el cluster ya no exista y la IP no funcione
-
-## Como usarlo
-Se puede deployar localmente haciendo:  
+# Leaderboard web page
+![](app_screenshot.png)
+## How to use
+You can deploy the web page locally doing:
 `docker compose up --build`  
-Ubicandose en el mismo path donde está docker-compose.yml
+When being in the same path as the docker-compose.yml. Now you can see the webpage at localhost:80
 
-O sino se puede deployar en un cluster de kubernetes haciendo `kubectl apply -f [archivo].yaml` de todos los yaml que están en la carpeta /kubernetes_yaml
+Or you can deploy it to a kubernetes cluster doing `kubectl apply -f [file_name].yaml` of all the yamls in the /kubernetes_yaml directory
 
-Es importante el orden! Se recomienda el siguiente orden:
+Some applies must be done in order, I recommend this order:
 ```
 kubectl apply -f metallb_config.yaml
 
@@ -29,4 +22,5 @@ kubectl apply -f redis_deployment.yaml
 kubectl apply -f redis_service.yaml
 
 ```
+You might not need metallb_config depending on your cluster configs.
 
