@@ -4,7 +4,8 @@ Lucas Moyano
 
 ## IP deployada
 Podes encontrar la webapp ya deployada en el ip:  
-10.230.60.21
+10.230.60.21  
+Nota: puede ser que el cluster ya no exista y la IP no funcione
 
 ## Como usarlo
 Se puede deployar localmente haciendo:  
