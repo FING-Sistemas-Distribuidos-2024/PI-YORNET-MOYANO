@@ -2,6 +2,10 @@
 
 Lucas Moyano
 
+## IP deployada
+Podes encontrar la webapp ya deployada en el ip:  
+10.230.60.21
+
 ## Como usarlo
 Se puede deployar localmente haciendo:  
 `docker compose up --build`  
